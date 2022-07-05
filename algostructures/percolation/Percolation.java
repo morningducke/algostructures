@@ -1,24 +1,18 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
-
-/* *****************************************************************************
- *  Name:              Alan Turing
- *  Coursera User ID:  123456
- *  Last modified:     1/1/2019
- **************************************************************************** */
 public class Percolation {
 
-    public int mat[][];
-    public int length;
-    public WeightedQuickUnionUF uf;
-    int top;
-    int bot;
+    private boolean mat[][];
+    private int length;
+    private WeightedQuickUnionUF uf;
+    private int top;
+    private int bot;
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
         if(n <= 0) {
             throw new IllegalArgumentException();
         }
         length = n;
-        mat = new int[n][n];
+        mat = new boolean[n][n];
         uf = new WeightedQuickUnionUF(n*n + 2); //+2 for virtual and bottom sites
         //top = n*n; bot = n*n+1
         top = n*n;
@@ -41,21 +35,22 @@ public class Percolation {
             throw new IllegalArgumentException();
         }
 
-        if(mat[r][c] == 0) {
-            mat[r][c] = 1;
+        if(!mat[r][c]) {
+            mat[r][c] = true;
         }
         //check row up
-        if(r-1 > 0) {
-            if(mat[r-1][c] == 1) {
+        if(r-1 >= 0) {
+            if(mat[r - 1][c]) {
                 uf.union(r*length + c, (r-1)*length + c);
             }
        }
         if(r == 0) {
             uf.union(c, top);
+
         }
         //check row down
         if(r+1 < length) {
-            if(mat[r+1][c] == 1) {
+            if(mat[r + 1][c]) {
                 uf.union(r*length + c, (r+1)*length + c);
             }
         }
@@ -64,14 +59,14 @@ public class Percolation {
         }
         //check col left
         if(c-1 >= 0) {
-            if(mat[r][c-1] == 1) {
+            if(mat[r][c-1]) {
                 uf.union(r*length + c, r*length + c - 1);
             }
         }
 
         //check col right
         if(c+1 < length) {
-            if(mat[r][c+1] == 1) {
+            if(mat[r][c+1]) {
                 uf.union(r*length + c, r*length + c + 1);
             }
         }
@@ -79,7 +74,7 @@ public class Percolation {
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
-        if(mat[row-1][col-1] == 1) {
+        if(mat[row-1][col-1]) {
             return true;
         }
         return false;
@@ -102,7 +97,7 @@ public class Percolation {
         int count = 0;
         for(int i = 0; i < length; i++) {
             for(int j = 0; j < length; j++) {
-                count += mat[i][j];
+                count += mat[i][j] ? 1 : 0;
             }
         }
         return count;
@@ -119,6 +114,17 @@ public class Percolation {
 
     // test client (optional)
     public static void main(String[] args) {
+        Percolation percolation = new Percolation(5);
+
+        for(int i = 0; i < percolation.length; i++) {
+            for(int j = 0; j < percolation.length; j++) {
+                percolation.open(i+1,j+1);
+                System.out.print(percolation.mat[i][j] ? 1 : 0);
+            }
+            System.out.println();
+        }
+        System.out.println(percolation.percolates());
+
 
 
     }
